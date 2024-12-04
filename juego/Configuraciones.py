@@ -4,15 +4,20 @@ from juego.Funciones import *
 
 pygame.init()
 
+BASE_DIR = os.path.dirname(__file__)
+
 # imagen fondo
-fondo_config = pygame.image.load("fondo-config.jpg")
+IMAGES_DIR = os.path.join(BASE_DIR, "imagenes")
+fondo_config = pygame.image.load(os.path.join(IMAGES_DIR, "fondo-config.jpg"))
 fondo_config = pygame.transform.scale(fondo_config, VENTANA)
 
-# Imagenes botones
-mute = pygame.image.load("unmute.png")
-mute = pygame.transform.scale(mute, (70,70))
-unmute = pygame.image.load("mute.png")
-unmute = pygame.transform.scale(unmute, (70,70))
+# Carga de imágenes
+mute = pygame.image.load(os.path.join(IMAGES_DIR, "unmute.png"))
+mute = pygame.transform.scale(mute, (70, 70))
+
+unmute = pygame.image.load(os.path.join(IMAGES_DIR, "mute.png"))
+unmute = pygame.transform.scale(unmute, (70, 70))
+
 
 mutear = False
 

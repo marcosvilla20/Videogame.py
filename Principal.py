@@ -29,7 +29,7 @@ while corriendo:
         if bandera_juego == False:
             porcentaje_coma = datos_juego["volumen_musica"] / 100
             pygame.mixer.init()
-            pygame.mixer.music.load("music.mp3")
+            pygame.mixer.music.load(MUSIC_PATH)
             pygame.mixer.music.set_volume(porcentaje_coma)
             pygame.mixer.music.play(-1)
             bandera_juego = True

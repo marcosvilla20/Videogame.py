@@ -5,8 +5,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Ruta al archivo de sonido
-SONIDOS_DIR = os.path.join(BASE_DIR, "sonidos")
-CLICK_SONIDO = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "click.mp3"))
+SONIDOS_DIR = os.path.join(BASE_DIR,"juego", "sonidos")
 
 pygame.init()
 
@@ -48,12 +47,12 @@ FUENTE_32 = pygame.font.SysFont("Arial",32)
 FUENTE_50 = pygame.font.SysFont("Arial",50)
 
 
-CLICK_SONIDO = pygame.mixer.Sound("click.mp3")
-ACIERTO_SONIDO = pygame.mixer.Sound("click.mp3")
-ERROR_SONIDO = pygame.mixer.Sound("error.mp3")
-ERROR_SONIDO_DOS = pygame.mixer.Sound("Error sound.mp3")
-SONIDO_3_SEG = pygame.mixer.Sound("3 seg.mp3")
-SONIDO_3_SEG.set_volume(0.5)
+CLICK_SONIDO = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "click.mp3"))
+ACIERTO_SONIDO = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "click.mp3"))
+ERROR_SONIDO = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "error.mp3"))
+ERROR_SONIDO_DOS = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "Error sound.mp3"))
+SONIDO_3_SEG = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "3 seg.mp3"))
+MUSIC_PATH = os.path.join(SONIDOS_DIR, "music.mp3")
 
 CANTIDAD_VIDAS = 3
 PUNTUACION_ACIERTO = 100

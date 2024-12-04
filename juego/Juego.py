@@ -1,8 +1,9 @@
 import pygame 
 import random
-from juego.Funciones import *
-from juego.Preguntas import *
-from juego.comodines import *
+from .Funciones import *
+from .Preguntas import *
+from .comodines import *
+from .Constantes import *
 
 pygame.init()
 cuadro_pregunta = {}
@@ -39,6 +40,13 @@ boton_pasar = pygame.Rect(355, 180, 40, 40)
 
 
 def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],datos_juego:dict) -> str:
+    """ 
+     ¿Que hace? MUESTRA LAS DIFERNTES PREGUNTAS AL JUGADOS,LOS COMODINES . LA CANTIDAD DE VIDAS DISPONIBLES , SI SE LE TERMINAN SE MUESTRA UN GAME OVER
+     ¿Que parametros recibe?
+        :::::::::::
+      ¿Que retorna?: 
+       ::::::::::::::::
+     """
     global indice
     global bandera_respuesta
     global tiempo_inicial
@@ -53,6 +61,15 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     tiempo_transcurrido = (tiempo_actual-tiempo_inicial) // 1000
     tiempo_restante = TIEMPO_MAX_PREGUNTA - tiempo_transcurrido
     
+    # Verificar si el jugador perdió todas las vidas
+    if datos_juego["cantidad_vidas"] <= 0:
+      mostrar_game_over(pantalla)
+      fuente = FUENTE_27  # Fuente predefinida o crea una nueva
+      cantidad_respuestas_correctas = datos_juego.get("puntuacion", 0)  # Ejemplo basado en datos_juego
+      total = len(lista_preguntas)  # Total de preguntas disponibles
+      pedir_nombre_usuario(pantalla, fuente, cantidad_respuestas_correctas, total)
+      retorno = "salir"
+
     if tiempo_restante == 4:
         SONIDO_3_SEG.play()
         bandera_advertencia = True
@@ -151,7 +168,7 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     lista_respuestas[1]["rectangulo"] = pantalla.blit(lista_respuestas[1]["superficie"],(125,315))#r2
     lista_respuestas[2]["rectangulo"] = pantalla.blit(lista_respuestas[2]["superficie"],(125,385))#r3
     
-    crear_rectangulo(pantalla,COLOR_BLANCO,lista_respuestas,2)
+    crear_rectangulo(pantalla,COLOR_BLANCO,lista_respuestas)
 
     crear_comodin(pantalla, boton_doble_chance, "Doble chance", FUENTE_22, not doble_chance_usado)
     crear_comodin(pantalla, boton_pasar, "Pasar", FUENTE_22, not comodin_pasar_usado)    
@@ -161,3 +178,8 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
     mostrar_texto(pantalla,f"TIEMPO: {tiempo_restante}s",(220,40),FUENTE_27,COLOR_NEGRO)
 
     return retorno
+
+
+
+
+
