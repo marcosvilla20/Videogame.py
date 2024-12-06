@@ -37,4 +37,4 @@ with open("Preguntas.csv", mode="w", newline="", encoding="utf-8") as file:
     for pregunta in lista_preguntas:
         writer.writerow([pregunta["pregunta"], pregunta["respuesta_1"], pregunta["respuesta_2"], pregunta["respuesta_3"], pregunta["respuesta_4"], pregunta["respuesta_correcta"]])
 
-print("Archivo 'Preguntas.csv' creado exitosamente.")
+print("Archivo csv creado exitosamente.")

@@ -3,8 +3,12 @@ import random
 import pygame
 import csv
 from generar_archivo import lista_preguntas
-
+import os
 def mostrar_texto(surface, text, pos, font, color=pygame.Color('black')):
+    """
+    Renderiza y dibuja texto en una superficie  
+    respetando los límites de ancho y ajustando el texto a nuevas líneas si es necesario.
+    """
     words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
     space = font.size(' ')[0]  # The width of a space.
     max_width, max_height = surface.get_size()
@@ -22,6 +26,9 @@ def mostrar_texto(surface, text, pos, font, color=pygame.Color('black')):
         y += word_height  # Start on new row.
 
 def crear_boton(color,tamaño,posicion)-> dict:
+    """
+    Crea un botón como un diccionario con una superficie y un rectángulo asociado.
+    """
     boton = {}
     boton["superficie"] = pygame.Surface(tamaño)
     boton["rectangulo"] = boton["superficie"].get_rect(topleft=posicion)
@@ -29,6 +36,9 @@ def crear_boton(color,tamaño,posicion)-> dict:
     return boton
 
 def bordear_boton(pantalla,boton, color, mouse_pos):
+    """
+    Dibuja un borde alrededor de un botón si el puntero del mouse está sobre él.
+    """
     if boton["rectangulo"].collidepoint(mouse_pos):
         pygame.draw.rect(pantalla, color, boton["rectangulo"], 4) 
 
@@ -40,6 +50,9 @@ def bordear_boton(pantalla,boton, color, mouse_pos):
 
 tiempo_inicial = 0
 def manejar_tiempo(pantalla, datos_juego):
+    """
+    Muestra un contador de tiempo en pantalla basado en el tiempo transcurrido desde que la función se llamó por primera vez.
+    """
     tiempo_inicial
 
     if tiempo_inicial == 0: 
@@ -49,22 +62,27 @@ def manejar_tiempo(pantalla, datos_juego):
         contador = FUENTE_22.render(f"Tiempo: {tiempo_transcurrido} SEG", True, (120, 70, 0))
         pantalla.blit(contador, (10, 10)) 
 
-def crear_rectangulo(pantalla, color, lista):
-    for item in lista:
-        pygame.draw.rect(pantalla, color, item["rectangulo"], 2)
-
 def inciializar_juego(datos_juego,bandera_juego,cola_eventos):
+    """
+    Inicializa el juego configurando música, volumen, y estableciendo la bandera de inicio.
+    """
     porcentaje_coma = datos_juego["volumen_musica"] / 100
     pygame.mixer.init()
+    
+    MUSIC_PATH = os.path.join(SONIDOS_DIR, "juego/sonidos/music.mp3")
+    if not os.path.isfile(MUSIC_PATH):
+        print("Error: No se encontró el archivo de música.")
+        return
+    
     pygame.mixer.music.load(MUSIC_PATH)
     pygame.mixer.music.set_volume(porcentaje_coma)
-    pygame.mixer.music.play(-1)
-    bandera_juego = True
-    tiempo_inicial = pygame.time.get_ticks() 
+    pygame.mixer.music.play(-1)  # Reproduce en bucle
     bandera_juego = True
 
 def mostrar_game_over(pantalla):
-
+    """"
+    Muestra una pantalla de "Game Over" con una imagen de fondo.
+    """
     fondo_game_over = cargar_fondo("juego/imagenes/game-over.jpg", (ANCHO,ALTO))
 
     pantalla.blit(fondo_game_over, (0,0))
@@ -92,24 +110,13 @@ def cargar_preguntas(nombre_archivo):
     return preguntas
 
 def mezclar_preguntas(lista_preguntas):
-    """
-    Mezcla aleatoriamente una lista de preguntas.
-    """
     random.shuffle(lista_preguntas)
     return lista_preguntas
 
 
 def pedir_nombre_usuario(ventana: pygame.Surface, fuente: pygame.font.Font, cantidad_respuestas_correctas: int, total: int):
     '''
-    ¿Que hace? -> Muestra una pantalla en la que se solicita al usuario ingresar su nombre y muestra su puntaje final.
-
-    ¿Que parametros recibe?
-        -ventana:pygame.Surface -> Superficie en la que se dibuja el botón.
-        -fuente:pygame.font.Font -> La fuente que se utiliza para renderizar el texto en el botón.
-        -cantidad_respuestas_correctas:int -> El número de respuestas correctas del usuario.
-        -total:int -> El número total de preguntas o respuestas.
-
-    ¿Que retorna?:str -> El nombre ingresado por el usuario como una cadena de texto.
+    Muestra una pantalla en la que se solicita al usuario ingresar su nombre y muestra su puntaje final
     '''
     nombre_ingresado = ""
     bandera_pedir_nombre = True
@@ -148,14 +155,8 @@ def pedir_nombre_usuario(ventana: pygame.Surface, fuente: pygame.font.Font, cant
 
 def convertir_csv_a_lista_diccionarios(path:str) -> list:
     """
-    ¿Que hace?-> Recibe la ruta de un csv lee sus lineas y las convierte en una lista de diccionarios, 
+    Funcion que recibe la ruta del csv lee sus lineas y las convierte en una lista de diccionarios, 
     entre las cabezeras y cada linea
-
-    ¿Que parametros acepta?
-        -path:str -> ruta del csv
-
-    ¿Que retorna?-> list: Una lista de diccionarios formados por las cabezeras y 
-                los datos linea a linea del csv
     """
     lista_diccionarios = []
     
@@ -176,26 +177,16 @@ def convertir_csv_a_lista_diccionarios(path:str) -> list:
 
 def obtener_puntaje_y_convertir_a_entero(diccionario: dict) -> int:
     '''
-    ¿Que hace? -> Extrae el valor asociado a la clave 'puntaje' de un diccionario y
+    Extrae el valor asociado a la clave 'puntaje' de un diccionario y
     lo convierte a un número entero.
-
-    ¿Que parametros recibe?
-        -diccionario: dict ->  Un diccionario que debe contener una clave 'puntaje' a convertir.     
-    
-    ¿Que retorna?: int -> El valor del 'puntaje' convertido a entero.
     '''
     puntaje_a_entero = int(diccionario['puntaje'])
     return puntaje_a_entero
 
 def ordenar_lista_diccionarios(lista:list) -> list:
     '''
-    ¿Que hace? -> Ordena una lista de diccionarios en orden descendente según el puntaje, 
+    Funcion que ordena una lista de diccionarios en orden descendente según el puntaje, 
     convirtiendo dicho valor a entero antes de ordenar.
-
-    ¿Que parametros recibe?
-        -lista: list -> Una lista de diccionarios a ordenar.
-
-    ¿Que retorna?:list -> La lista de diccionarios ordenada en orden descendente por puntaje.
     '''
     lista_ordenada = sorted(lista, key=obtener_puntaje_y_convertir_a_entero, reverse=True)
     return lista_ordenada
@@ -213,26 +204,20 @@ def verificar_respuesta(pantalla, respuesta_usuario, pregunta_correcta, datos_ju
         datos_juego["respuestas_correctas_consecutivas"] = 0 
         return False  
 
-def avanzar_pregunta(indice, lista_preguntas):
-    """
-    Esta función avanza la pregunta al siguiente índice en la lista de preguntas.
-    Si llegamos al final de las preguntas, podemos reiniciar el juego o finalizarlo.
-    """
-    indice += 1
-    if indice >= len(lista_preguntas):
-        print("Se ha terminado el juego.")
-        return None 
-    return indice
+# def avanzar_pregunta(indice, lista_preguntas):
+#     """
+#     Esta función avanza la pregunta al siguiente índice en la lista de preguntas.
+#     Si llegamos al final de las preguntas, podemos reiniciar el juego o finalizarlo.
+#     """
+#     indice += 1
+#     if indice >= len(lista_preguntas):
+#         print("Se ha terminado el juego.")
+#         return None 
+#     return indice
 
 def cargar_fondo(ruta: str, dimensiones: tuple) -> pygame.Surface:
     '''
-    ¿Que hace? -> Carga una imagen desde una ruta y la escala a las dimensiones proporcionadas.
-
-    ¿Que parametros recibe?
-        -ruta: str ->  La ruta del archivo de imagen a cargar.
-        -dimensiones: tuple -> Las dimensiones (ancho, alto) a las que se debe redimensionar la imagen.
-
-    ¿Que retorna?:pygame.Surface -> El objeto de superficie de Pygame que contiene la imagen cargada y redimensionada.
+    Funcion que carga una imagen desde una ruta y la escala a las dimensiones proporcionadas.
     '''
     fondo = pygame.image.load(ruta)
     return pygame.transform.scale(fondo, dimensiones)

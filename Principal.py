@@ -5,7 +5,7 @@ from juego.Menu import *
 from juego.Juego import *
 from juego.Configuraciones import *
 from Puntuaciones import *
-
+from juego.sonidos import *
 
 pygame.init()
 pygame.display.set_caption("JUEGO 314")
@@ -27,7 +27,14 @@ while corriendo:
         ventana_actual = mostrar_menu(pantalla,cola_eventos)
     elif ventana_actual == "juego":
         if bandera_juego == False:
-            inciializar_juego(datos_juego,bandera_juego,cola_eventos,)
+            porcentaje_coma = datos_juego["volumen_musica"] / 100
+            pygame.mixer.init()
+            pygame.mixer.music.load("juego/sonidos/music.mp3")
+            pygame.mixer.music.set_volume(porcentaje_coma)
+            pygame.mixer.music.play(-1)
+            bandera_juego = True
+            tiempo_inicial = pygame.time.get_ticks() 
+            bandera_juego = True
         ventana_actual = mostrar_juego(pantalla,cola_eventos,datos_juego)
     elif ventana_actual == "configuracion":
         ventana_actual = mostrar_ajustes(pantalla,cola_eventos,datos_juego)

@@ -25,6 +25,7 @@ COLOR_DORADO = (255, 215, 0, 255)
 COLOR_CELESTE = (0, 191, 255, 255)
 COLOR_VERDE_AGUA = (102, 205, 170, 255)
 COLOR_AZUL_MARINO = (0, 0, 128, 255)
+COLOR_AZUL_CLARO = (173, 216, 230, 255)
 
 ANCHO = 500
 ALTO = 550
@@ -43,7 +44,7 @@ FUENTE_22 = pygame.font.SysFont("britannic",17)
 FUENTE_25 = pygame.font.SysFont("britannic",38)
 FUENTE_27 = pygame.font.SysFont("Arial",22)
 FUENTE_30 = pygame.font.SysFont("'pristina",38)
-FUENTE_32 = pygame.font.SysFont("'arialms",30)
+FUENTE_32 = pygame.font.SysFont("'arialms",32)
 FUENTE_50 = pygame.font.SysFont("Arial",50)
 
 
@@ -55,9 +56,9 @@ SONIDO_3_SEG = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "3 seg.mp3"))
 MUSIC_PATH = os.path.join(SONIDOS_DIR, "music.mp3")
 
 
-CANTIDAD_VIDAS = 5
-PUNTUACION_ACIERTO = 100
-PUNTUACION_ERROR = 25
+CANTIDAD_VIDAS = 3
+PUNTUACION_ACIERTO = 10
+PUNTUACION_ERROR = 5
 
 BOTON_JUGAR = 0
 BOTON_AJUSTES = 1

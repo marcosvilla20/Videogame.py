@@ -41,7 +41,7 @@ def mostrar_menu(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event]) 
     lista_botones[BOTON_AJUSTES]["rectangulo"] = pantalla.blit(lista_botones[BOTON_AJUSTES]["superficie"],(125,195))
     lista_botones[BOTON_RANKINGS]["rectangulo"] = pantalla.blit(lista_botones[BOTON_RANKINGS]["superficie"],(125,275))
     lista_botones[BOTON_SALIR]["rectangulo"] = pantalla.blit(lista_botones[BOTON_SALIR]["superficie"],(125,355))
-        
+    
     mostrar_texto(lista_botones[BOTON_JUGAR]["superficie"],"JUGAR",(75,20),FUENTE_30,COLOR_VERDE_AGUA)
     mostrar_texto(lista_botones[BOTON_AJUSTES]["superficie"],"AJUSTES",(60,20),FUENTE_30,COLOR_VERDE_AGUA)
     mostrar_texto(lista_botones[BOTON_RANKINGS]["superficie"],"RANKINGS",(50,20),FUENTE_30,COLOR_VERDE_AGUA)
