@@ -1,6 +1,8 @@
 from juego.Constantes import *
 import random
 import pygame
+import csv
+from generar_archivo import lista_preguntas
 
 def mostrar_texto(surface, text, pos, font, color=pygame.Color('black')):
     words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
@@ -51,30 +53,54 @@ def crear_rectangulo(pantalla, color, lista):
     for item in lista:
         pygame.draw.rect(pantalla, color, item["rectangulo"], 2)
 
+def inciializar_juego(datos_juego,bandera_juego,cola_eventos):
+    porcentaje_coma = datos_juego["volumen_musica"] / 100
+    pygame.mixer.init()
+    pygame.mixer.music.load(MUSIC_PATH)
+    pygame.mixer.music.set_volume(porcentaje_coma)
+    pygame.mixer.music.play(-1)
+    bandera_juego = True
+    tiempo_inicial = pygame.time.get_ticks() 
+    bandera_juego = True
 
-def mostrar_game_over(pantalla: pygame.Surface):
-    # Configuración de colores
-    COLOR_FONDO = (0, 0, 0)  # Negro
-    COLOR_TEXTO = (255, 0, 0)  # Rojo
+def mostrar_game_over(pantalla):
 
-    # Llenar la pantalla con el fondo negro
-    pantalla.fill(COLOR_FONDO)
+    pantalla.fill(COLOR_GRIS)
 
-    # Cargar la fuente y definir el texto
-    fuente = pygame.font.Font(None, 74)  # Fuente predeterminada, tamaño 74
-    texto = fuente.render("GAME OVER", True, COLOR_TEXTO)
+    fuente = pygame.font.Font(None, 74) 
+    texto = fuente.render("GAME OVER", True, COLOR_AZUL_MARINO)
 
-    # Obtener el rectángulo del texto para centrarlo
     rect_texto = texto.get_rect(center=(pantalla.get_width() // 2, pantalla.get_height() // 2))
-
-    # Dibujar el texto en la pantalla
     pantalla.blit(texto, rect_texto)
 
-    # Actualizar la pantalla
     pygame.display.flip()
+    pygame.time.delay(2000)  
 
-    # Pausar por un momento
-    pygame.time.delay(2000)  # Pausa de 2 segundos
+
+def cargar_preguntas(nombre_archivo):
+    """""
+    Carga las preguntas desde un archivo CSV y las devuelve como una lista de diccionarios.
+    """
+    preguntas = []
+    with open(nombre_archivo, "r", newline="", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            preguntas.append({
+                "pregunta": row["pregunta"],
+                "respuesta_1": row["respuesta_1"],
+                "respuesta_2": row["respuesta_2"],
+                "respuesta_3": row["respuesta_3"],
+                "respuesta_4": row["respuesta_4"], 
+                "respuesta_correcta": int(row["respuesta_correcta"])  # Convertimos a entero
+            })
+    return preguntas
+
+def mezclar_preguntas(lista_preguntas):
+    """
+    Mezcla aleatoriamente una lista de preguntas.
+    """
+    random.shuffle(lista_preguntas)
+    return lista_preguntas
 
 
 def pedir_nombre_usuario(ventana: pygame.Surface, fuente: pygame.font.Font, cantidad_respuestas_correctas: int, total: int):
@@ -123,3 +149,83 @@ def pedir_nombre_usuario(ventana: pygame.Surface, fuente: pygame.font.Font, cant
                     nombre_ingresado += evento.unicode
 
     return nombre_ingresado
+
+def convertir_csv_a_lista_diccionarios(path:str) -> list:
+    """
+    ¿Que hace?-> Recibe la ruta de un csv lee sus lineas y las convierte en una lista de diccionarios, 
+    entre las cabezeras y cada linea
+
+    ¿Que parametros acepta?
+        -path:str -> ruta del csv
+
+    ¿Que retorna?-> list: Una lista de diccionarios formados por las cabezeras y 
+                los datos linea a linea del csv
+    """
+    lista_diccionarios = []
+    
+    with open(path, mode='r', encoding='utf-8') as archivo:
+        lineas = archivo.readlines()
+        encabezados = lineas[0].strip().split(',')
+    
+        for linea in lineas[1:]:
+            valores = linea.strip().split(',')
+
+            for i in range(len(valores)):
+                valores[i] = valores[i].strip('"')
+
+            fila_diccionario = dict(zip(encabezados, valores))
+            lista_diccionarios.append(fila_diccionario)
+    
+    return lista_diccionarios
+
+def obtener_puntaje_y_convertir_a_entero(diccionario: dict) -> int:
+    '''
+    ¿Que hace? -> Extrae el valor asociado a la clave 'puntaje' de un diccionario y
+    lo convierte a un número entero.
+
+    ¿Que parametros recibe?
+        -diccionario: dict ->  Un diccionario que debe contener una clave 'puntaje' a convertir.     
+    
+    ¿Que retorna?: int -> El valor del 'puntaje' convertido a entero.
+    '''
+    puntaje_a_entero = int(diccionario['puntaje'])
+    return puntaje_a_entero
+
+def ordenar_lista_diccionarios(lista:list) -> list:
+    '''
+    ¿Que hace? -> Ordena una lista de diccionarios en orden descendente según el puntaje, 
+    convirtiendo dicho valor a entero antes de ordenar.
+
+    ¿Que parametros recibe?
+        -lista: list -> Una lista de diccionarios a ordenar.
+
+    ¿Que retorna?:list -> La lista de diccionarios ordenada en orden descendente por puntaje.
+    '''
+    lista_ordenada = sorted(lista, key=obtener_puntaje_y_convertir_a_entero, reverse=True)
+    return lista_ordenada
+
+def verificar_respuesta(pantalla, respuesta_usuario, pregunta_correcta, datos_juego, fuente):
+    if respuesta_usuario == pregunta_correcta: 
+        datos_juego["respuestas_correctas_consecutivas"] += 1
+        
+        if datos_juego["respuestas_correctas_consecutivas"] == 5:
+            datos_juego["cantidad_vidas"] += 1 
+            datos_juego["respuestas_correctas_consecutivas"] = 0  
+
+        return True  
+    else:  
+        datos_juego["respuestas_correctas_consecutivas"] = 0 
+        return False  
+
+def avanzar_pregunta(indice, lista_preguntas):
+    """
+    Esta función avanza la pregunta al siguiente índice en la lista de preguntas.
+    Si llegamos al final de las preguntas, podemos reiniciar el juego o finalizarlo.
+    """
+    indice += 1
+    if indice >= len(lista_preguntas):
+        # Aquí puedes definir qué hacer cuando ya no hay más preguntas.
+        # Por ejemplo, mostrar la pantalla de fin de juego.
+        print("Se ha terminado el juego.")
+        return None  # O cualquier otra lógica que desees para el fin del juego.
+    return indice
