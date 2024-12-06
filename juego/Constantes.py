@@ -39,11 +39,11 @@ TAMAÑO_BOTON_VOLUMEN = (60,60)
 TAMAÑO_BOTON_VOLVER = (100,40)
 
 
-FUENTE_22 = pygame.font.SysFont("britannic",24)
+FUENTE_22 = pygame.font.SysFont("britannic",17)
 FUENTE_25 = pygame.font.SysFont("britannic",38)
 FUENTE_27 = pygame.font.SysFont("Arial",22)
-FUENTE_30 = pygame.font.SysFont("Arial",30)
-FUENTE_32 = pygame.font.SysFont("Arial",32)
+FUENTE_30 = pygame.font.SysFont("'pristina",38)
+FUENTE_32 = pygame.font.SysFont("'arialms",30)
 FUENTE_50 = pygame.font.SysFont("Arial",50)
 
 
@@ -54,7 +54,8 @@ ERROR_SONIDO_DOS = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "Error sound.mp3
 SONIDO_3_SEG = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "3 seg.mp3"))
 MUSIC_PATH = os.path.join(SONIDOS_DIR, "music.mp3")
 
-CANTIDAD_VIDAS = 3
+
+CANTIDAD_VIDAS = 5
 PUNTUACION_ACIERTO = 100
 PUNTUACION_ERROR = 25
 

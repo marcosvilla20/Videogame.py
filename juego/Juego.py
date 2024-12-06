@@ -13,7 +13,7 @@ cuadro_pregunta["superficie"] = pygame.Surface(TAMAÑO_PREGUNTA)
 # cuadro_pregunta["superficie"] = pygame.image.load("fondo.jpg")
 # cuadro_pregunta["superficie"] = pygame.transform.scale(fondo,TAMAÑO_PREGUNTA)
 cuadro_pregunta["rectangulo"] = cuadro_pregunta["superficie"].get_rect()
-cuadro_pregunta["superficie"].fill(COLOR_ROJO)
+cuadro_pregunta["superficie"].fill(COLOR_VERDE_AGUA)
 
 # Carga de preguntas desde CSV
 lista_preguntas = cargar_preguntas("preguntas.csv")
@@ -25,7 +25,7 @@ for i in range(4):
     cuadro_respuesta = {}
     cuadro_respuesta["superficie"] = pygame.Surface(TAMAÑO_RESPUESTA)
     cuadro_respuesta["rectangulo"] = cuadro_respuesta["superficie"].get_rect()
-    cuadro_respuesta["superficie"].fill(COLOR_AZUL)
+    cuadro_respuesta["superficie"].fill(COLOR_VERDE_AGUA)
     lista_respuestas.append(cuadro_respuesta)
     
 indice = 0 #Son inmutables
@@ -41,8 +41,10 @@ bandera_sonido_advertencia = False
 doble_chance_activado = False
 doble_chance_usado = False
 comodin_pasar_usado = False
-boton_doble_chance = pygame.Rect(300, 180, 40, 40)
-boton_pasar = pygame.Rect(355, 180, 40, 40)
+boton_doble_chance = pygame.Rect(310, 190, 50, 40)
+boton_pasar = pygame.Rect(385, 190, 50, 40)
+
+fondo_imagen = cargar_fondo("juego/imagenes/fondo-juego.jpg", (ANCHO, ALTO))
 
 def mostrar_juego(pantalla: pygame.Surface, cola_eventos: list[pygame.event.Event], datos_juego: dict) -> str:
     global indice
@@ -59,7 +61,6 @@ def mostrar_juego(pantalla: pygame.Surface, cola_eventos: list[pygame.event.Even
     tiempo_transcurrido = (tiempo_actual - tiempo_inicial) // 1000
     tiempo_restante = TIEMPO_MAX_PREGUNTA - tiempo_transcurrido
 
-    # Verificar si el jugador perdió todas las vidas
     if datos_juego["cantidad_vidas"] <= 0:
         mostrar_game_over(pantalla)
         fuente = FUENTE_27
@@ -68,7 +69,6 @@ def mostrar_juego(pantalla: pygame.Surface, cola_eventos: list[pygame.event.Even
         datos_juego["nombre"] = pedir_nombre_usuario(pantalla, fuente, cantidad_respuestas_correctas, total)
         if datos_juego["nombre"]:
             guardar_puntaje(datos_juego["nombre"], datos_juego["puntuacion"], "top_10.csv")
-        ventana_actual = "menu"
         return "menu"
     
     if tiempo_restante == 4:
@@ -81,13 +81,18 @@ def mostrar_juego(pantalla: pygame.Surface, cola_eventos: list[pygame.event.Even
         tiempo_inicial = pygame.time.get_ticks()
         bandera_sonido_advertencia = False
         SONIDO_3_SEG.stop()
-        avanzar_pregunta()
+        
+        # Cambiar a la siguiente pregunta automáticamente
+        indice = avanzar_pregunta(indice, lista_preguntas)  # Avanza al siguiente índice de pregunta
+        if indice is None:  # Si no hay más preguntas, termina el juego
+            mostrar_game_over(pantalla)
+            return "fin"
     
     if bandera_respuesta:
         pygame.time.delay(250)
-        cuadro_pregunta["superficie"].fill(COLOR_ROJO)
+        cuadro_pregunta["superficie"].fill(COLOR_VERDE_AGUA)
         for i in range(len(lista_respuestas)):
-            lista_respuestas[i]["superficie"].fill(COLOR_AZUL)
+            lista_respuestas[i]["superficie"].fill(COLOR_VERDE_AGUA)
         bandera_respuesta = False
 
     pregunta_actual = lista_preguntas[indice]
@@ -104,20 +109,21 @@ def mostrar_juego(pantalla: pygame.Surface, cola_eventos: list[pygame.event.Even
             elif comprobar_click(evento.pos, boton_pasar, not comodin_pasar_usado):
                 print("Comodín Pasar Activado")
                 comodin_pasar_usado = True
-                avanzar_pregunta()
+                indice = avanzar_pregunta(indice, lista_preguntas)  # Avanzar pregunta manualmente
+                if indice is None:
+                    mostrar_game_over(pantalla)
+                    return "fin"
 
             tiempo_inicial = pygame.time.get_ticks()
-            cuadro_pregunta["superficie"].fill(COLOR_ROJO)
+            cuadro_pregunta["superficie"].fill(COLOR_VERDE_AGUA)
             for respuesta in lista_respuestas:
-                respuesta["superficie"].fill(COLOR_AZUL)
+                respuesta["superficie"].fill(COLOR_VERDE_AGUA)
             bandera_respuesta = True
             bandera_sonido_advertencia = False
             SONIDO_3_SEG.stop()
-            indice = avanzar_pregunta(indice, lista_preguntas)
+            indice = avanzar_pregunta(indice, lista_preguntas)  # Avanzar al siguiente índice de pregunta
             if indice is None:
-                # Aquí puedes manejar la lógica de fin del juego, por ejemplo:
                 mostrar_game_over(pantalla)
-                # Puedes ir a otra pantalla o terminar el juego
                 return "fin"
 
             for i in range(len(lista_respuestas)):
@@ -146,39 +152,34 @@ def mostrar_juego(pantalla: pygame.Surface, cola_eventos: list[pygame.event.Even
                             datos_juego["cantidad_vidas"] -= 1
                             datos_juego["respuestas_correctas_consecutivas"] = 0  # Reinicia solo en error
 
-                    avanzar_pregunta(indice,lista_preguntas)
+                    indice = avanzar_pregunta(indice, lista_preguntas) 
                     bandera_respuesta = True
                     tiempo_inicial = pygame.time.get_ticks()
                     bandera_sonido_advertencia = False
 
-    pantalla.fill(COLOR_VIOLETA)
-
-    #pantalla.blit(fondo,(0,0))
+    pantalla.blit(fondo_imagen, (0, 0)) 
     
-    mostrar_texto(cuadro_pregunta["superficie"],f"{pregunta_actual["pregunta"]}",(40,40),FUENTE_27,COLOR_NEGRO)
-    mostrar_texto(lista_respuestas[0]["superficie"],f"{pregunta_actual["respuesta_1"]}",(20,20),FUENTE_27,COLOR_BLANCO)
-    mostrar_texto(lista_respuestas[1]["superficie"],f"{pregunta_actual["respuesta_2"]}",(20,20),FUENTE_27,COLOR_BLANCO)
-    mostrar_texto(lista_respuestas[2]["superficie"],f"{pregunta_actual["respuesta_3"]}",(20,20),FUENTE_27,COLOR_BLANCO)
-    mostrar_texto(lista_respuestas[3]["superficie"],f"{pregunta_actual["respuesta_4"]}",(20,20),FUENTE_27,COLOR_BLANCO)
+    mostrar_texto(cuadro_pregunta["superficie"],f"{pregunta_actual["pregunta"]}",(40,40),FUENTE_32,COLOR_NEGRO)
+    mostrar_texto(lista_respuestas[0]["superficie"],f"{pregunta_actual["respuesta_1"]}",(20,20),FUENTE_32,COLOR_NEGRO)
+    mostrar_texto(lista_respuestas[1]["superficie"],f"{pregunta_actual["respuesta_2"]}",(20,20),FUENTE_32,COLOR_NEGRO)
+    mostrar_texto(lista_respuestas[2]["superficie"],f"{pregunta_actual["respuesta_3"]}",(20,20),FUENTE_32,COLOR_NEGRO)
+    mostrar_texto(lista_respuestas[3]["superficie"],f"{pregunta_actual["respuesta_4"]}",(20,20),FUENTE_32,COLOR_NEGRO)
     
-    cuadro_pregunta["rectangulo"] = pantalla.blit(cuadro_pregunta["superficie"],(80,80))
+    cuadro_pregunta["rectangulo"] = pantalla.blit(cuadro_pregunta["superficie"],(90,90))
     lista_respuestas[0]["rectangulo"] = pantalla.blit(lista_respuestas[0]["superficie"],(125,245))#r1
     lista_respuestas[1]["rectangulo"] = pantalla.blit(lista_respuestas[1]["superficie"],(125,315))#r2
     lista_respuestas[2]["rectangulo"] = pantalla.blit(lista_respuestas[2]["superficie"],(125,385))#r3
     lista_respuestas[3]["rectangulo"] = pantalla.blit(lista_respuestas[3]["superficie"],(125,455))#r4
     
-    crear_rectangulo(pantalla,COLOR_BLANCO,lista_respuestas)
+    crear_rectangulo(pantalla,COLOR_VERDE_AGUA,lista_respuestas)
 
-    crear_comodin(pantalla, boton_doble_chance, "Doble chance", FUENTE_22, not doble_chance_usado)
+    crear_comodin(pantalla, boton_doble_chance, "2chance", FUENTE_22, not doble_chance_usado)
     crear_comodin(pantalla, boton_pasar, "Pasar", FUENTE_22, not comodin_pasar_usado)    
     
-    mostrar_texto(pantalla,f"PUNTUACION: {datos_juego['puntuacion']}",(10,10),FUENTE_27,COLOR_NEGRO)
-    mostrar_texto(pantalla,f"VIDAS: {datos_juego['cantidad_vidas']}",(10,40),FUENTE_27,COLOR_NEGRO)
-    mostrar_texto(pantalla,f"TIEMPO: {tiempo_restante}s",(220,40),FUENTE_27,COLOR_NEGRO)
-    mostrar_texto(pantalla, f"RESPUESTAS CORRECTAS CONSECUTIVAS: {datos_juego['respuestas_correctas_consecutivas']}", (10, 70), FUENTE_27, COLOR_NEGRO)
+    mostrar_texto(pantalla,f"PUNTUACION: {datos_juego['puntuacion']}",(10,10),FUENTE_30,COLOR_NEGRO)
+    mostrar_texto(pantalla,f"VIDAS: {datos_juego['cantidad_vidas']}",(10,40),FUENTE_30,COLOR_NEGRO)
+    mostrar_texto(pantalla,f"TIEMPO: {tiempo_restante}s",(260,41),FUENTE_25,COLOR_NEGRO)
+    mostrar_texto(pantalla, f"CONSECUTIVAS: {datos_juego['respuestas_correctas_consecutivas']}", (100, 85), FUENTE_27, COLOR_NEGRO)
     return retorno
-
-
-
 
 

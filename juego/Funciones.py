@@ -65,13 +65,9 @@ def inciializar_juego(datos_juego,bandera_juego,cola_eventos):
 
 def mostrar_game_over(pantalla):
 
-    pantalla.fill(COLOR_GRIS)
+    fondo_game_over = cargar_fondo("juego/imagenes/game-over.jpg", (ANCHO,ALTO))
 
-    fuente = pygame.font.Font(None, 74) 
-    texto = fuente.render("GAME OVER", True, COLOR_AZUL_MARINO)
-
-    rect_texto = texto.get_rect(center=(pantalla.get_width() // 2, pantalla.get_height() // 2))
-    pantalla.blit(texto, rect_texto)
+    pantalla.blit(fondo_game_over, (0,0))
 
     pygame.display.flip()
     pygame.time.delay(2000)  
@@ -120,14 +116,14 @@ def pedir_nombre_usuario(ventana: pygame.Surface, fuente: pygame.font.Font, cant
 
     while bandera_pedir_nombre:
 
-        ventana.fill(COLOR_NEGRO)
+        ventana.fill(COLOR_GRIS)
         # Mostrar puntaje final
         resultado_texto = fuente.render(
-            f"Puntaje final: {cantidad_respuestas_correctas}/{total}", True, COLOR_BLANCO)
+            f"Puntaje final: {cantidad_respuestas_correctas}", True, COLOR_BLANCO)
         ventana.blit(resultado_texto, (ANCHO // 2 - resultado_texto.get_width(
         ) // 2, (ALTO // 3 - 50)))
 
-        mensaje = fuente.render("Ingrese su nombre:", True, COLOR_AZUL_MARINO)
+        mensaje = fuente.render("Ingrese su nombre: ", True, COLOR_AZUL_MARINO)
         ventana.blit(
             mensaje, (ANCHO // 2 - mensaje.get_width() // 2, ALTO // 3))
 
@@ -224,8 +220,19 @@ def avanzar_pregunta(indice, lista_preguntas):
     """
     indice += 1
     if indice >= len(lista_preguntas):
-        # Aquí puedes definir qué hacer cuando ya no hay más preguntas.
-        # Por ejemplo, mostrar la pantalla de fin de juego.
         print("Se ha terminado el juego.")
-        return None  # O cualquier otra lógica que desees para el fin del juego.
+        return None 
     return indice
+
+def cargar_fondo(ruta: str, dimensiones: tuple) -> pygame.Surface:
+    '''
+    ¿Que hace? -> Carga una imagen desde una ruta y la escala a las dimensiones proporcionadas.
+
+    ¿Que parametros recibe?
+        -ruta: str ->  La ruta del archivo de imagen a cargar.
+        -dimensiones: tuple -> Las dimensiones (ancho, alto) a las que se debe redimensionar la imagen.
+
+    ¿Que retorna?:pygame.Surface -> El objeto de superficie de Pygame que contiene la imagen cargada y redimensionada.
+    '''
+    fondo = pygame.image.load(ruta)
+    return pygame.transform.scale(fondo, dimensiones)
