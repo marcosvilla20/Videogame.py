@@ -218,7 +218,7 @@ def verificar_respuesta(pantalla, respuesta_usuario, pregunta_correcta, datos_ju
 
 def cargar_fondo(ruta: str, dimensiones: tuple) -> pygame.Surface:
     '''
-    Funcion que carga una imagen desde una ruta y la escala a las dimensiones proporcionadas.
+    Funcion que carga una imagen desde una ruta ingresada y la escala.
     '''
     fondo = pygame.image.load(ruta)
     return pygame.transform.scale(fondo, dimensiones)
