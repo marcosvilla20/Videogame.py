@@ -6,6 +6,8 @@ from juego.Juego import *
 from juego.Configuraciones import *
 from Puntuaciones import *
 from juego.sonidos import *
+from juego.Preguntas import  *
+from juego.opciones import *
 
 pygame.init()
 pygame.display.set_caption("JUEGO 314")
@@ -44,6 +46,8 @@ while corriendo:
         if datos_juego["nombre"]: 
             guardar_puntaje(datos_juego["nombre"], datos_juego["puntuacion"], "top_10.csv")
         ventana_actual = "menu" 
+    elif ventana_actual == "opciones":
+        ventana_actual =  agregar_pregunta()
     elif ventana_actual == "salir":
         corriendo = False
     

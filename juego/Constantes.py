@@ -55,6 +55,10 @@ ERROR_SONIDO_DOS = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "Error sound.mp3
 SONIDO_3_SEG = pygame.mixer.Sound(os.path.join(SONIDOS_DIR, "3 seg.mp3"))
 MUSIC_PATH = os.path.join(SONIDOS_DIR, "music.mp3")
 
+#Rutas
+RUTA_CONFIGURACIONES_CSV = "c"
+RUTA_PREGUNTAS="Preguntas.csv"
+
 
 CANTIDAD_VIDAS = 3
 PUNTUACION_ACIERTO = 10
@@ -64,3 +68,4 @@ BOTON_JUGAR = 0
 BOTON_AJUSTES = 1
 BOTON_RANKINGS = 2
 BOTON_SALIR = 3
+BOTON_OPCIONES = 4

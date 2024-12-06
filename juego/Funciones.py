@@ -162,7 +162,7 @@ def convertir_csv_a_lista_diccionarios(path:str) -> list:
     
     with open(path, mode='r', encoding='utf-8') as archivo:
         lineas = archivo.readlines()
-        encabezados = lineas[0].strip().split(',')
+        encabezados = lineas[0].strip().split(',') # cabecera
     
         for linea in lineas[1:]:
             valores = linea.strip().split(',')
@@ -170,7 +170,7 @@ def convertir_csv_a_lista_diccionarios(path:str) -> list:
             for i in range(len(valores)):
                 valores[i] = valores[i].strip('"')
 
-            fila_diccionario = dict(zip(encabezados, valores))
+            fila_diccionario = dict(zip(encabezados, valores)) # -> devuelve tuplas
             lista_diccionarios.append(fila_diccionario)
     
     return lista_diccionarios
@@ -187,8 +187,9 @@ def ordenar_lista_diccionarios(lista:list) -> list:
     '''
     Funcion que ordena una lista de diccionarios en orden descendente según el puntaje, 
     convirtiendo dicho valor a entero antes de ordenar.
+    sorted -> devuelve una lista ordenada de mayor a menor 
     '''
-    lista_ordenada = sorted(lista, key=obtener_puntaje_y_convertir_a_entero, reverse=True)
+    lista_ordenada = sorted(lista, key=obtener_puntaje_y_convertir_a_entero, reverse=True) 
     return lista_ordenada
 
 def verificar_respuesta(pantalla, respuesta_usuario, pregunta_correcta, datos_juego, fuente):

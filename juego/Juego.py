@@ -1,7 +1,6 @@
 import pygame 
 import random
 from .Funciones import *
-from .Preguntas import *
 from .comodines import *
 from .Constantes import *
 from Puntuaciones import *
@@ -130,6 +129,7 @@ def mostrar_juego(pantalla:pygame.Surface,cola_eventos:list[pygame.event.Event],
                     
                     if respuesta_seleccionada == pregunta_actual["respuesta_correcta"]:
                         ACIERTO_SONIDO.play()
+
                         lista_respuestas[i]["superficie"].fill(COLOR_VERDE_OSCURO)
                         datos_juego["puntuacion"] += PUNTUACION_ACIERTO
                         
