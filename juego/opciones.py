@@ -9,11 +9,6 @@ screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Juego de Preguntas")
 
 
-# Colores personalizables
-COLOR_TEXTO = (255, 255, 255)  # Blanco
-COLOR_FONDO = (50, 50, 50)     # Fondo oscuro
-COLOR_AZUL = (0, 120, 255)     # Azul para resaltado
-
 preguntas = []
 
 
@@ -68,7 +63,7 @@ def agregar_pregunta():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 input_active = False
-                return "salir"  # Si el evento es cerrar la ventana, salimos
+                return "salir"  
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     if estado == "pregunta" and pregunta:
